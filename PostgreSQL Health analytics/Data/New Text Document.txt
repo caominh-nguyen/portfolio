@@ -1,0 +1,34 @@
+
+
+Health data measured by users using their wearables and enter into a tracking device.
+Columns in the data table:
+	id: id of the users
+	log_date: the date the record is entered
+	measure: the type of measures, can be weight, blood glucose and blood pressure
+	measure_value: measure values for weight and blood glucose
+	systolic and diastolyc: measure values for blood pressure
+
+--schema health
+--table user_logs
+-- id varchar
+-- log_date date
+-- measure text
+-- measure_value numeric
+-- systolic numeric
+-- diastolic numeric
+
+How many unique users exist in the logs dataset? A=554
+How many duplicated records are there? A=19449
+How many unquie records are there? A=24442
+Who are the users with the most duplicated records? 054250c692e07a9fa9e62e345231df4b54ff435d with 17279 duplicated records
+How many duplicated records in each measure category? blood_glucose = 18471; weight = 677; blood_pressure = 301
+Ignore duplications, for weight, what are the minimum and maximum records? A = 39642120 and 0
+Ignore duplications and exclude outliers, what are the avg, median, mode, stde of weight measures? A = mean_value/median_value/mode_value/standard_deviation = 80.76/75.98/68.49/26.91
+How many total measurements do we have per user on average? A=79.23
+What about the median number of measurements per user? A=2
+How many users have 3 or more measurements? A=209
+How many users have 1,000 or more measurements? A=5
+How many users Have logged blood glucose measurements? A=325
+How many user have at least 2 types of measurements? A=204
+How many users have all 3 measures - blood glucose, weight and blood pressure? A=50
+For users that have blood pressure measurements, what is the median systolic/diastolic blood pressure values? 
