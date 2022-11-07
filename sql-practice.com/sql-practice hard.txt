@@ -1,0 +1,116 @@
+1. Show all of the patients grouped into weight groups. Show the total amount of patients in each weight group. Order the list by the weight group decending. For example, if they weight 100 to 109 they are placed in the 100 weight group, 110-119 = 110 weight group, etc.
+select
+  floor(weight / 10) * 10 as bucket,
+  count (*) as records
+from patients
+group by bucket
+order by bucket desc;
+2. Show patient_id, weight, height, isObese from the patients table. Display isObese as a boolean 0 or 1. Obese is defined as weight(kg)/(height(m)2) >= 30. weight is in units kg. height is in units cm.
+SELECT
+  patient_id,
+  weight,
+  height,
+  (CASE WHEN weight / (POWER(height / 100.0, 2)) >= 30 THEN 1 ELSE 0 END) AS Obese
+FROM patients;
+3. Show patient_id, first_name, last_name, and attending physician's specialty. Show only the patients who has a diagnosis as 'Dementia' and the physician's first name is 'Lisa'
+select
+  patients.patient_id,
+  patients.first_name,
+  patients.last_name,
+  physicians.specialty
+from (
+    patients
+    inner join admissions on patients.patient_id = admissions.patient_id
+  )
+  inner join physicians on physicians.physician_id = admissions.attending_physician_id
+where
+  admissions.diagnosis = 'Epilepsy'
+  and physicians.first_name = 'Lisa';
+4. All patients who have gone through admissions, can see their medical documents on our site. Those patients are given a temporary password after their first admission. Show the patient_id and temp_password. The password must be the following, in order:
+1. patient_id
+2. the numerical length of patient's last_name
+3. year of patient's birth_date
+
+select
+  distinct a.patient_id,
+  concat(
+    a.patient_id,
+    len(a.last_name),
+    year(a.birth_date)
+  ) as temp_password
+from patients a
+  inner join admissions on a.patient_id = admissions.patient_id;
+5. Each admission costs $50 for patients without insurance, and $10 for patients with insurance. All patients with an even patient_id have insurance.
+Give each patient a 'Yes' if they have insurance, and a 'No' if they don't have insurance. Add up the admission_total cost for each has_insurance group.
+select
+  (case when patient_id % 2 = 0 then 'Yes' Else 'No'end) as insurance,
+  sum(case when patient_id % 2 = 0 then 10 Else 50 end) as cost
+from admissions
+group by insurance;
+6. Show the provinces that has more patients identified as 'M' than 'F'. Must only show full province_name
+with cte as(
+    select
+      province_id,
+      count(case when gender = 'M' then 1 else null end) as m_count,
+      count(case when gender = 'F' then 1 else null end) as f_count
+    from patients
+    group by province_id
+  )
+select province_names.province_name
+from province_names
+  inner join cte on province_names.province_id = cte.province_id
+where cte.m_count > cte.f_count;
+
+7. We are looking for a specific patient. Pull all columns for the patient who matches the following criteria:
+First_name contains an 'r' after the first two letters.
+Identifies their gender as 'F'
+Born in February, May, or December
+Their weight would be between 60kg and 80kg
+Their patient_id is an odd number
+They are from the city 'Kingston'
+select *
+from patients
+where
+  first_name like '__r%'
+  and gender = 'F'
+  and month(birth_date) in (2, 5, 12)
+  and weight between 60 and 80
+  and patient_id % 2 <> 0
+  and city = 'Kingston';
+
+8. Show the percent of patients that have 'M' as their gender. Round the answer to the nearest hundreth number and in percent form.
+SELECT concat(round(count(case when gender ='M' then 1 end)*100.0/count(*),2),'%') as percentage
+from patients;
+9. For each day display the total amount of admissions on that day. Display the amount changed from the previous date.
+with cte as(
+    select
+      distinct admission_date as udate,
+      count(*) over(partition by admission_date) as today
+    from admissions
+    order by udate asc
+  )
+select
+  udate,
+  today,
+  today - lag(today, 1) over(
+    order by udate
+  ) as change
+from cte;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

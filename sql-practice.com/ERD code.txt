@@ -1,0 +1,36 @@
+table patients{
+  "patient_id" integer
+  "first_name" text
+  "last_name" text
+  "gender" char(1)
+  "birth_date" date
+  "city" text
+  "province_id" char(2)
+  "allergies" text
+  "height" integer
+  "weight" integer
+}
+
+table admissions{
+  "patient_id" integer
+  "admission_date" date
+  "discharge_date" date
+  "diagnosis" text
+  "attending_physician_id" integer
+}
+
+table physicians{
+  "physician_id" integer
+  "first_name" text
+  "last_name" text
+  "specialty" text
+}
+
+table province_names{
+  "province_id" char(2)
+  "province_name" text
+}
+
+ref: "patients"."patient_id" < "admissions"."patient_id"
+ref: "admissions"."attending_physician_id" > "physicians"."physician_id"
+ref: "patients"."province_id" > "province_names"."province_id"
